@@ -17,4 +17,14 @@ export class handleRquest {
     users.push(newUser);
     return newUser;
   }
+
+  updateUser(id: string, body: PostNewUserRequestBody): void {
+    users.forEach((user) => {
+      if (user.id === id) {
+        user.username = body.username;
+        user.age = body.age;
+        user.hobbies = body.hobbies;
+      }
+    });
+  }
 }

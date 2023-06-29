@@ -37,11 +37,80 @@ const app = http.createServer((req, res) => {
                 )
               );
             }
-          } catch (error) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(handleError(`Server Error`, res.statusCode));
+          } catch (error: any) {
+            handleError(error.message, error.status);
           }
         } else {
+          try {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(
+              JSON.stringify(
+                handleError(
+                  `UserId ${userID} is invalid (not uuid)`,
+                  res.statusCode
+                )
+              )
+            );
+          } catch (error: any) {
+            handleError(error.message, error.status);
+          }
+        }
+      }
+    }
+    if (url === '/api/users' && method === 'POST') {
+      try {
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk;
+        });
+        req.on('end', () => {
+          const newUser = JSON.parse(body);
+          if (newUser.username && newUser.age && newUser.hobbies) {
+            const createdUser = db.createNewUser(newUser);
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(createdUser));
+          } else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(
+              handleError('The request does not contain required fields', 400)
+            );
+          }
+        });
+      } catch (error: any) {
+        handleError(error.message, error.status);
+      }
+    }
+    if (method === 'PUT') {
+      if (isValidUUID(userID)) {
+        try {
+          const user = db.getUserById(userID);
+          if (user) {
+            let body = '';
+            req.on('data', (chunk) => {
+              body += chunk;
+            });
+            req.on('end', () => {
+              db.updateUser(userID, JSON.parse(body));
+            });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end('User was successfuly updated');
+          } else {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(
+              JSON.stringify(
+                handleError(
+                  `User with id ${userID} doesn't exist`,
+                  res.statusCode
+                )
+              )
+            );
+          }
+        } catch (error: any) {
+          handleError(error.message, error.status);
+        }
+      } else {
+        try {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(
             JSON.stringify(
@@ -51,22 +120,10 @@ const app = http.createServer((req, res) => {
               )
             )
           );
+        } catch (error: any) {
+          handleError(error.message, error.status);
         }
       }
-    }
-    if (url === '/api/users' && method === 'POST') {
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk;
-      });
-      req.on('end', () => {
-        const newUser = JSON.parse(body);
-        if (newUser.username && newUser.age && newUser.hobbies) {
-          const createdUser = db.createNewUser(newUser);
-          res.writeHead(201, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(createdUser));
-        }
-      });
     }
   }
 });
