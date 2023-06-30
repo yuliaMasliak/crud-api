@@ -8,6 +8,5 @@ export function handleErrors(
 ) {
   console.error('Error:', err);
   res.writeHead(status, { 'Content-Type': 'application/json' });
-  console.error('Error:', err);
   res.end(message);
 }
