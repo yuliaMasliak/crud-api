@@ -1,3 +1,3 @@
 import { User } from './models';
 
-export let users: User[] = [];
+export const users: User[] = [];

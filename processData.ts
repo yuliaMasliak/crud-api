@@ -2,12 +2,12 @@ const { v4: uuidv4 } = require('uuid');
 import { User, PostNewUserRequestBody } from './models';
 import { users } from './dataBase';
 
-export class handleRquest {
+export class processData {
   getAllUsers(): User[] {
     return users;
   }
   getUserById(id: string): User | undefined {
-    const user = users.find((user) => (user.id = id));
+    const user = users.find((user) => user.id === id);
     return user;
   }
 
@@ -24,6 +24,13 @@ export class handleRquest {
         user.username = body.username;
         user.age = body.age;
         user.hobbies = body.hobbies;
+      }
+    });
+  }
+  deleteUser(id: string) {
+    users.forEach((user, i) => {
+      if (user.id === id) {
+        users.splice(i, 1);
       }
     });
   }
