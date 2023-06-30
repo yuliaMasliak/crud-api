@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon --exec npx ts-node ./src/index.ts",
     "lint": "npx eslint ./src/index.ts",
-    "build": "webpack"
+    "build": "webpack --config webpack.config.js",
+    "start:prod": "npm run build && node dist/bundle.js"
   },
   "keywords": [],
   "author": "",
