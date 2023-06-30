@@ -2,11 +2,12 @@
   "name": "crud-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": ".src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "nodemon --exec npx ts-node ./index.ts",
-    "lint": "npx eslint index.ts"
+    "start:dev": "nodemon --exec npx ts-node ./src/index.ts",
+    "lint": "npx eslint ./src/index.ts",
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +17,10 @@
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",
-    "typescript": "^5.1.6"
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.1.6",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
