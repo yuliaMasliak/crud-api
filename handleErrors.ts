@@ -1,7 +1,7 @@
 import * as http from 'http';
 
 export function handleErrors(
-  err: any,
+  err: unknown,
   res: http.ServerResponse,
   status = 500,
   message = 'Internal Server Error'

@@ -38,7 +38,7 @@ export function handleRequests(
                 `User with id ${userID} doesn't exist`
               );
             }
-          } catch (err: any) {
+          } catch (err: unknown) {
             handleErrors(err, res);
           }
         } else {
@@ -66,7 +66,7 @@ export function handleRequests(
               handleErrors(err, res, 400, err.message);
             }
           });
-        } catch (err: any) {
+        } catch (err: unknown) {
           handleErrors(err, res);
         }
 
@@ -90,7 +90,7 @@ export function handleRequests(
               const err = new Error(`User with id ${userID} doesn't exist`);
               handleErrors(err, res, 404, err.message);
             }
-          } catch (err: any) {
+          } catch (err: unknown) {
             handleErrors(err, res);
           }
         } else {
@@ -110,7 +110,7 @@ export function handleRequests(
               const err = new Error(`User with id ${userID} doesn't exist`);
               handleErrors(err, res, 404, err.message);
             }
-          } catch (err: any) {
+          } catch (err: unknown) {
             handleErrors(err, res);
           }
         } else {
@@ -118,6 +118,9 @@ export function handleRequests(
           handleErrors(err, res, 400, err.message);
         }
       }
+    } else {
+      const err = new Error(`Wrong url (endpoint)`);
+      handleErrors(err, res, 404, err.message);
     }
   }
 }
