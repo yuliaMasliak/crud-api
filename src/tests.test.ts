@@ -1,6 +1,6 @@
 import { isValidUUID } from './validator';
 import http from 'http';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 require('dotenv').config();
 
 test('id specified in UUID format', () => {
@@ -10,106 +10,89 @@ test('id specified in UUID format', () => {
   expect(isValidUUID(notValid)).toBeFalsy();
 });
 
-test('GET should return empty array of users at start', (done) => {
-  const options = {
-    hostname: 'localhost',
-    port: process.env.PORT,
-    path: '/api/users',
-    method: 'GET'
-  };
-
-  const req = http.request(options, (res) => {
-    let responseData = '';
-    res.on('data', (chunk) => {
-      responseData += chunk;
-    });
-
-    res.on('end', () => {
-      expect(res.statusCode).toBe(200);
-      expect(JSON.parse(responseData)).toEqual([
-        {
-          username: 'DefaultUser',
-          age: 41,
-          hobbies: ['dance'],
-          id: '3d48009d-7c95-4735-b897-2b175e6c9008'
-        }
-      ]);
-      done();
-    });
-  });
-  req.on('error', (error) => {
-    console.error(error);
-  });
-  req.end();
+test('GET should return empty array of users at start', async () => {
+  const response = await axios.get(
+    `http://localhost:${process.env.PORT}/api/users`
+  );
+  expect(response.status).toBe(200);
+  expect(response.data).toEqual([]);
 });
 
-test('POST should return newly created user', (done) => {
-  const content = JSON.stringify({
+test('POST should return newly created user', async () => {
+  const content = {
     username: 'John',
     age: 32,
     hobbies: ['running', 'fishing']
-  });
-
-  const options = {
-    hostname: 'localhost',
-    port: process.env.PORT,
-    path: '/api/users',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(content)
-    }
   };
 
-  const req = http.request(options, (res) => {
-    let responseData = '';
-
-    res.on('data', (chunk) => {
-      responseData += chunk;
-    });
-
-    res.on('end', () => {
-      expect(res.statusCode).toBe(201);
-      expect(JSON.parse(responseData)).toEqual({
-        username: 'John',
-        age: 32,
-        hobbies: ['running', 'fishing'],
-        id: JSON.parse(responseData).id
-      });
-      done();
-    });
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  const response = await axios.post(
+    `http://localhost:${process.env.PORT}/api/users`,
+    content,
+    { headers }
+  );
+  expect(response.status).toBe(201);
+  expect(response.data).toEqual({
+    username: 'John',
+    age: 32,
+    hobbies: ['running', 'fishing'],
+    id: response.data.id
   });
-
-  req.on('error', (error) => {
-    console.error(error);
-  });
-
-  req.write(content);
-
-  req.end();
 });
 
 test('PUT with valid ID should update user data', async () => {
-  const validId = '3d48009d-7c95-4735-b897-2b175e6c9008';
-  const content = {
+  let validId = '';
+  const newContent = {
     username: 'Yulia'
   };
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  const content = {
+    username: 'John',
+    age: 32,
+    hobbies: ['running', 'fishing']
+  };
+  const response1 = await axios.post(
+    `http://localhost:${process.env.PORT}/api/users`,
+    content,
+    { headers }
+  );
+  validId = response1.data.id;
 
-  try {
-    const response = await axios.put(
-      `http://localhost:${process.env.PORT}/api/users/${validId}`,
-      content
-    );
-    expect(response.status).toBe(200);
-    expect(response.data).toEqual('User was successfuly updated');
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    if (axiosError.response) {
-      console.error(axiosError.response.data);
-    } else {
-      console.error(error);
-    }
-  }
+  const response2 = await axios.put(
+    `http://localhost:${process.env.PORT}/api/users/${validId}`,
+    newContent
+  );
+  expect(response2.status).toBe(200);
+  expect(response2.data).toEqual('User was successfuly updated');
+});
+
+test('DELETE with valid ID should delete existing User', async () => {
+  let validId = '';
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  const content = {
+    username: 'John',
+    age: 32,
+    hobbies: ['running', 'fishing']
+  };
+  const response1 = await axios.post(
+    `http://localhost:${process.env.PORT}/api/users`,
+    content,
+    { headers }
+  );
+  validId = response1.data.id;
+
+  const response2 = await axios.delete(
+    `http://localhost:${process.env.PORT}/api/users/${validId}`
+  );
+  expect(response2.status).toBe(200);
+  expect(response2.data).toEqual('User was successfuly deleted');
 });
 
 test('DELETE with invalid ID should response with status 400', (done) => {
