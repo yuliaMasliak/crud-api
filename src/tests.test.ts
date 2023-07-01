@@ -28,7 +28,7 @@ test('GET should return empty array of users at start', (done) => {
       expect(res.statusCode).toBe(200);
       expect(JSON.parse(responseData)).toEqual([
         {
-          username: 'Roman',
+          username: 'DefaultUser',
           age: 41,
           hobbies: ['dance'],
           id: '3d48009d-7c95-4735-b897-2b175e6c9008'
@@ -87,7 +87,7 @@ test('POST should return newly created user', (done) => {
   req.write(content);
 
   req.end();
-}, 10000);
+});
 
 test('PUT with valid ID should update user data', async () => {
   const validId = '3d48009d-7c95-4735-b897-2b175e6c9008';
@@ -110,7 +110,7 @@ test('PUT with valid ID should update user data', async () => {
       console.error(error);
     }
   }
-}, 10000);
+});
 
 test('DELETE with invalid ID should response with status 400', (done) => {
   const invalidId = 'sfsdv';
@@ -139,4 +139,4 @@ test('DELETE with invalid ID should response with status 400', (done) => {
     console.error(error);
   });
   req.end();
-}, 90000);
+});
