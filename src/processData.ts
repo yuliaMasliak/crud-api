@@ -21,9 +21,15 @@ export class processData {
   updateUser(id: string, body: PostNewUserRequestBody): void {
     users.forEach((user) => {
       if (user.id === id) {
-        user.username = body.username;
-        user.age = body.age;
-        user.hobbies = body.hobbies;
+        if (body.username) {
+          user.username = body.username;
+        }
+        if (body.age) {
+          user.age = body.age;
+        }
+        if (body.hobbies) {
+          user.hobbies = body.hobbies;
+        }
       }
     });
   }

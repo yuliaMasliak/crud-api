@@ -38,7 +38,7 @@ export function handleRequests(
                 `User with id ${userID} doesn't exist`
               );
             }
-          } catch (err: any) {
+          } catch (err: unknown) {
             handleErrors(err, res);
           }
         } else {
@@ -66,7 +66,7 @@ export function handleRequests(
               handleErrors(err, res, 400, err.message);
             }
           });
-        } catch (err: any) {
+        } catch (err: unknown) {
           handleErrors(err, res);
         }
 
@@ -85,12 +85,16 @@ export function handleRequests(
               });
 
               res.writeHead(200, { 'Content-Type': 'application/json' });
-              res.end('User was successfuly updated');
+              res.end(
+                JSON.stringify({
+                  message: 'User was successfully updated'
+                })
+              );
             } else {
               const err = new Error(`User with id ${userID} doesn't exist`);
               handleErrors(err, res, 404, err.message);
             }
-          } catch (err: any) {
+          } catch (err: unknown) {
             handleErrors(err, res);
           }
         } else {
@@ -105,12 +109,16 @@ export function handleRequests(
               db.deleteUser(userID);
 
               res.writeHead(200, { 'Content-Type': 'application/json' });
-              res.end('User was successfuly deleted');
+              res.end(
+                JSON.stringify({
+                  message: 'User was successfuly deleted'
+                })
+              );
             } else {
               const err = new Error(`User with id ${userID} doesn't exist`);
               handleErrors(err, res, 404, err.message);
             }
-          } catch (err: any) {
+          } catch (err: unknown) {
             handleErrors(err, res);
           }
         } else {
@@ -118,6 +126,9 @@ export function handleRequests(
           handleErrors(err, res, 400, err.message);
         }
       }
+    } else {
+      const err = new Error(`Wrong url (endpoint)`);
+      handleErrors(err, res, 404, err.message);
     }
   }
 }

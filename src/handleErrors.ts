@@ -1,13 +1,12 @@
 import * as http from 'http';
 
 export function handleErrors(
-  err: any,
+  err: unknown,
   res: http.ServerResponse,
   status = 500,
-  message = 'Internal Server Error'
+  errorMessage = 'Internal Server Error'
 ) {
   console.error('Error:', err);
   res.writeHead(status, { 'Content-Type': 'application/json' });
-  console.error('Error:', err);
-  res.end(message);
+  res.end(JSON.stringify({ message: errorMessage }));
 }
